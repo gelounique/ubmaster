@@ -6,10 +6,7 @@
 #ifndef BuildDir
   #define BuildDir "..\..\build\UBMaster_artefacts\Release"
 #endif
-; pass /DWithAAX=1 when the (PACE-signed) AAX build exists in {#BuildDir}\AAX
-#ifndef WithAAX
-  #define WithAAX 0
-#endif
+; pass /DWithAAX (only) when the PACE-signed AAX build exists in {#BuildDir}\AAX
 
 [Setup]
 AppId={{9C4D2B7E-1A3F-4E6B-8D21-5F7A0C3E9B12}
@@ -65,7 +62,7 @@ Name: "custom"; Description: "Anpassen / Custom"; Flags: iscustom
 
 [Components]
 Name: "vst3"; Description: "{cm:CompVst3}"; Types: full custom; Flags: fixed
-#if WithAAX
+#ifdef WithAAX
 Name: "aax"; Description: "{cm:CompAax}"; Types: full
 #endif
 Name: "app"; Description: "{cm:CompApp}"; Types: full
@@ -75,7 +72,7 @@ Name: "desktopicon"; Description: "{cm:Desktop}"; Components: app; Flags: unchec
 
 [Files]
 Source: "{#BuildDir}\VST3\UBMaster.vst3\*"; DestDir: "{commoncf64}\VST3\UBMaster.vst3"; Components: vst3; Flags: ignoreversion recursesubdirs createallsubdirs
-#if WithAAX
+#ifdef WithAAX
 Source: "{#BuildDir}\AAX\UBMaster.aaxplugin\*"; DestDir: "{commoncf64}\Avid\Audio\Plug-Ins\UBMaster.aaxplugin"; Components: aax; Flags: ignoreversion recursesubdirs createallsubdirs
 #endif
 Source: "{#BuildDir}\Standalone\UBMaster.exe"; DestDir: "{app}"; Components: app; Flags: ignoreversion

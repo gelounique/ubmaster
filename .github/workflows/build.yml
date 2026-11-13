@@ -96,8 +96,8 @@ jobs:
             $env:PATH = "$p;$env:PATH"
           }
           $ver = (Select-String -Path CMakeLists.txt -Pattern 'project\(UBMaster VERSION ([0-9.]+)').Matches[0].Groups[1].Value
-          $aax = if ($env:SHIP_AAX -eq '1') { 1 } else { 0 }
-          iscc /DAppVersion=$ver /DWithAAX=$aax /DBuildDir="..\..\build\UBMaster_artefacts\Release" installer\windows\UBMaster.iss
+          $aax = if ($env:SHIP_AAX -eq '1') { '/DWithAAX' } else { '/DNoAAX' }
+          iscc /DAppVersion=$ver $aax /DBuildDir="..\..\build\UBMaster_artefacts\Release" installer\windows\UBMaster.iss
           Get-FileHash dist\UBMaster-Windows-Setup.exe -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  UBMaster-Windows-Setup.exe" } | Out-File -Encoding ascii dist\UBMaster-Windows-Setup.exe.sha256
       - name: Install test (silent install -> pluginval installed VST3 -> app launch -> uninstall)
         shell: pwsh
