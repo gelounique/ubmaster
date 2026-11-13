@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<script>if(location.protocol==="http:"&&location.hostname!=="localhost"&&location.hostname!=="127.0.0.1")location.replace("https://"+location.host+location.pathname+location.search+location.hash);</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UBMaster by unique &amp; MELO – Mastering-Plugin für jede DAW (Windows &amp; Mac)</title>
+<meta name="description" content="UBMaster: Mastering-Suite von unique &amp; MELO. Master-EQ (M/S, L/R), Tape-Sättigung im wählbaren Spektrum, spektraler Transienten-Prozessor, 3-Band-Stereo, Exciter, True-Peak-Limiter und Loudness-Modi für Spotify, Apple Music, YouTube &amp; SoundCloud. VST3, AU &amp; Standalone für Windows und Mac.">
+<meta name="theme-color" content="#000000">
+<meta property="og:title" content="UBMaster – Mastering-Suite by unique &amp; MELO">
+<meta property="og:description" content="EQ · Tape · Transient · Stereo · Exciter · Limiter · Loudness. Ein Plugin statt sieben. VST3, AU &amp; Standalone für Windows und Mac.">
+<meta property="og:image" content="https://ubmaster.uniquebaby.de/assets/og.jpg">
+<meta property="og:url" content="https://ubmaster.uniquebaby.de/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="assets/icon-64.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/site.css?v=100">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-eq" viewBox="-4 -4 108 108"><path d="M2 62C18 62 20 30 33 30S50 74 66 74 84 44 98 44"/><circle cx="33" cy="30" r="7"/><circle cx="66" cy="74" r="7"/><circle cx="90" cy="46" r="5"/></symbol>
+    <symbol id="i-tape" viewBox="-4 -4 108 108"><circle cx="27" cy="42" r="21"/><circle cx="73" cy="42" r="21"/><circle cx="27" cy="42" r="5"/><circle cx="73" cy="42" r="5"/><path d="M27 84h46M8 50Q10 84 27 84M92 50Q90 84 73 84"/></symbol>
+    <symbol id="i-tr" viewBox="-4 -4 108 108"><path d="M0 62h26l6-54 8 78 8-44 8 30 8-17 8 11h28"/></symbol>
+    <symbol id="i-st" viewBox="-4 -4 108 108"><circle cx="36" cy="50" r="27"/><circle cx="64" cy="50" r="27"/></symbol>
+    <symbol id="i-ex" viewBox="-4 -4 108 108"><path d="M42 18Q50 48 80 56 50 64 42 94 34 64 4 56 34 48 42 18Z"/><path d="M82 3Q85 15 97 18 85 21 82 33 79 21 67 18 79 15 82 3Z"/></symbol>
+    <symbol id="i-lim" viewBox="-4 -4 108 108"><path d="M0 22h100"/><path d="M0 70l12-34 8-6h14l10 54 12-54h14l10 32 10-22 10 8"/></symbol>
+    <symbol id="i-loud" viewBox="-4 -4 108 108"><path d="M20 82A42 42 0 1 1 80 82"/><path d="M20 82A42 42 0 0 1 82 26" stroke-width="9"/><circle cx="82" cy="26" r="7" fill="currentColor"/></symbol>
+  </defs>
+</svg>
+
+<div id="ld" aria-hidden="true"><div class="ld-ico"><canvas id="ldRing" width="280" height="280"></canvas><img src="assets/ub-white.png" alt=""></div><span class="ld-pc" id="ldPc">0</span></div>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="UBMaster – nach oben"><img src="assets/ub-white.png" alt="UB"><b>UBMaster</b></a>
+  <nav class="links">
+    <a href="#kette">Module</a><a href="#loudness">Loudness</a><a href="#plugin">Plugin</a><a href="#vergleich">Vergleich</a><a href="#download">Download</a>
+    <div class="sw" id="sw">
+      <button type="button" aria-haspopup="true" aria-expanded="false">Software</button>
+      <div class="sw-menu" role="menu">
+        <a href="https://ubgrade.uniquebaby.de" role="menuitem"><img src="assets/fam-ubgrade.png" alt=""><span><b>UBGrade</b><i>COLOR GRADING · ADOBE &amp; DAVINCI</i></span></a>
+        <a href="https://ubtune.uniquebaby.de" role="menuitem"><img src="assets/fam-ubtune.png" alt=""><span><b>UBTune</b><i>REALTIME AUTOTUNE · VST3 / AU</i></span></a>
+        <a href="#top" class="cur" role="menuitem"><img src="assets/fam-ubmaster.png" alt=""><span><b>UBMaster</b><i>MASTERING SUITE · VST3 / AU</i></span></a>
+      </div>
+    </div>
+  </nav>
+  <a class="btn primary sm" href="#download">Download</a>
+</header>
+
+<main id="top">
+
+<section class="hero" id="hero">
+  <div class="hero-txt">
+    <div class="eyebrow reveal">UBMASTER <span class="ver">1.0.0</span> · BY UNIQUE &amp; MELO</div>
+    <h1 class="reveal">Laut genug.<br><span class="silver">Auf den Punkt.</span></h1>
+    <p class="lead reveal">Die komplette Mastering-Kette in einem Plugin: EQ, Tape, Transient, Stereo, Exciter und True-Peak-Limiter – plus Loudness-Modi, die dir genau sagen, wie du dein Ziel für Spotify, Apple Music, YouTube oder SoundCloud triffst.</p>
+    <div class="cta reveal">
+      <a class="btn primary" href="#download"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4.5-4.5M12 14l-4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download Windows &amp; Mac</a>
+      <a class="btn ghost" href="#loudness">Loudness-Modi ansehen</a>
+    </div>
+    <div class="stats reveal">
+      <div><b>7</b><span>MODULE · 1 PLUGIN</span></div>
+      <div><b>8×</b><span>TRUE-PEAK-OVERSAMPLING</span></div>
+      <div><b>BS.1770</b><span>LUFS · TP · LRA</span></div>
+    </div>
+  </div>
+  <div class="hero-vis">
+    <div class="halo" id="heroHalo">
+      <canvas id="haloCv" aria-hidden="true"></canvas>
+      <div class="halo-center"><img src="assets/ub-white.png" alt=""><div class="lufs" id="haloLufs">-14.0</div><div class="unit">LUFS · SHORT-TERM</div><div class="delta" id="haloDelta">● AUF ZIEL</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-label="Plattformen und DAWs"><div class="mq-track">
+  <span>Spotify −14 LUFS</span><span>Apple Music −16 LUFS</span><span>YouTube −14 LUFS</span><span>SoundCloud −14 LUFS</span><span>FL Studio</span><span>Ableton Live</span><span>Logic Pro</span><span>Cubase</span><span>Studio One</span><span>Reaper</span><span>Bitwig</span>
+</div></div>
+
+<!-- SIGNALKETTE -->
+<section class="sec" id="kette">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">DIE SIGNALKETTE</div>
+      <h2>Sieben Stationen. <span class="glowtxt">Ein Klang.</span></h2>
+      <p>In genau dieser Reihenfolge – so wie man auch mit einzelnen Plugins mastern würde. Jedes Modul lässt sich per Klick aus- und einschalten.</p>
+    </div>
+    <div class="chain">
+      <article class="mod panel reveal"><span class="num">01</span><svg class="i"><use href="#i-eq"/></svg><h3>Master-EQ</h3><p>6 Bänder mit Low/High-Cut, Shelves und zwei Bells. Umschaltbar zwischen <b>Global</b>, <b>Mid/Side</b> und <b>Links/Rechts</b> – jedes Band wirkt auf beide, Mid oder Side.</p><div class="kv"><span>GLOBAL</span><span>M/S</span><span>L/R</span></div></article>
+      <article class="mod panel reveal"><span class="num">02</span><svg class="i"><use href="#i-tape"/></svg><h3>Tape-Sim</h3><p>Band-Sättigung mit <b>wählbarem Spektrum</b>: Du legst fest, in welchem Frequenzbereich die Sättigung wirkt – der Rest bleibt unberührt.</p><div class="kv"><span>DRIVE</span><span>RANGE</span><span>CHARACTER</span></div></article>
+      <article class="mod panel reveal"><span class="num">03</span><svg class="i"><use href="#i-tr"/></svg><h3>Transient</h3><p>Adaptiver, spektraler Transienten-Prozessor: findet Attacks frequenzabhängig und <b>cuttet oder boostet</b> sie – nur dort, wo es nötig ist.</p><div class="kv"><span>CUT</span><span>BOOST</span><span>DELTA</span></div></article>
+      <article class="mod panel reveal"><span class="num">04</span><svg class="i"><use href="#i-st"/></svg><h3>Stereo-Tool</h3><p>Stereobreite getrennt in <b>Low, Mid und High</b> – Bass mono halten, Höhen öffnen. Mit Vectorscope und Korrelationsanzeige.</p><div class="kv"><span>3 BÄNDER</span><span>VECTORSCOPE</span></div></article>
+      <article class="mod panel reveal"><span class="num">05</span><svg class="i"><use href="#i-ex"/></svg><h3>Exciter</h3><p>Erzeugt neue Obertöne ab einer frei wählbaren Frequenz – <b>Tube</b> (gerade) bis <b>Tape</b> (ungerade). Glanz ohne EQ-Boost.</p><div class="kv"><span>AMOUNT</span><span>FREQ</span><span>TUBE ↔ TAPE</span></div></article>
+      <article class="mod panel reveal"><span class="num">06</span><svg class="i"><use href="#i-lim"/></svg><h3>Limiter</h3><p>True-Peak-Brickwall mit Lookahead und 8×-Peak-Erkennung. <b>Ceiling</b> einstellen, Gain rein – mit Gain-Reduction-Verlauf.</p><div class="kv"><span>GAIN</span><span>CEILING</span><span>RELEASE</span></div></article>
+      <article class="mod panel wide loud reveal"><span class="num">07</span><svg class="i"><use href="#i-loud"/></svg><h3>Loudness-Modi</h3><p>Spotify, Apple Music, YouTube, SoundCloud oder Custom: LUFS-Meter (<b>Integrated, Short-term, Momentary, True Peak, LRA</b>), einstellbarer Ziel-LUFS und konkrete Empfehlungen, wie du ihn erreichst. Ein Klick auf <b>„Auf Ziel bringen“</b> stellt den Limiter passend ein.</p><div class="kv"><span>EBU R128</span><span>ITU-R BS.1770-4</span><span>AUF ZIEL BRINGEN</span></div></article>
+    </div>
+  </div>
+</section>
+
+<!-- LOUDNESS -->
+<section class="sec" id="loudness">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">LOUDNESS-MODI</div>
+      <h2>Wähl die Plattform.<br><span class="silver">UBMaster sagt dir den Rest.</span></h2>
+      <p>Jeder Modus setzt Ziel-LUFS und Ceiling. Die Empfehlungsbox rechnet live mit und sagt dir in Klartext, was du drehen musst.</p>
+    </div>
+    <div class="modes">
+      <div class="plat panel reveal">
+        <div class="pillrow" id="platPills" role="tablist">
+          <button class="on" data-p="0">Spotify</button><button data-p="1">Apple Music</button><button data-p="2">YouTube</button><button data-p="3">SoundCloud</button><button data-p="4">Custom</button>
+        </div>
+        <div class="targets">
+          <div><i>ZIEL</i><b id="tLufs">-14.0<small>LUFS</small></b></div>
+          <div><i>CEILING</i><b id="tCeil">-1.0<small>dBTP</small></b></div>
+          <div><i>DEIN MIX</i><b id="tMix">-9.6<small>LUFS</small></b></div>
+        </div>
+        <label class="custom" id="customRow"><span class="mono dim">CUSTOM</span><input type="range" id="customLufs" min="-30" max="-5" step="0.5" value="-14"></label>
+        <p class="note" id="platNote">Spotify normalisiert auf −14 LUFS. Bist du lauter, wirst du runtergedreht – nimm dann −2 dBTP als Ceiling.</p>
+      </div>
+      <div class="meters panel reveal">
+        <div class="mrow"><i>INTEGRATED</i><div class="bar"><span id="mI"></span><em id="mkI"></em></div><b id="vI">-9.6</b></div>
+        <div class="mrow"><i>SHORT-TERM</i><div class="bar"><span id="mS"></span><em id="mkS"></em></div><b id="vS">-9.2</b></div>
+        <div class="mrow"><i>TRUE PEAK</i><div class="bar"><span id="mT"></span><em id="mkT"></em></div><b id="vT">-0.3</b></div>
+        <div class="mrow"><i>LRA</i><div class="bar"><span id="mL"></span></div><b id="vL">4.8 LU</b></div>
+        <div class="advice"><div class="eyebrow" id="advHead">EMPFEHLUNG · SPOTIFY −14 LUFS</div><h4 id="advTitle">4.4 dB lauter als das Ziel</h4><ul id="advList"></ul></div>
+        <p class="fine">Beispiel-Werte eines lauten Club-Mixes – im Plugin misst UBMaster deinen Track live.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLUGIN -->
+<section class="sec" id="plugin">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">DAS PLUGIN</div>
+      <h2>Schwarz. Clean. <span class="glowtxt">Ein Halo.</span></h2>
+      <p>In der Mitte der Loudness Halo – ein Spektrum-Ring wie Vinyl-Rillen mit deinem Ziel als leuchtendem Marker. Darunter die Kette, unten Meter und Empfehlungen.</p>
+    </div>
+    <div class="shot-tabs reveal" role="tablist">
+      <button class="on" data-shot="eq">EQ</button><button data-shot="tape">TAPE</button><button data-shot="transient">TRANSIENT</button><button data-shot="stereo">STEREO</button><button data-shot="exciter">EXCITER</button><button data-shot="limiter">LIMITER</button>
+    </div>
+    <figure class="shot reveal"><img id="shotImg" src="assets/shot-eq.jpg" srcset="assets/shot-eq-1x.jpg 992w, assets/shot-eq.jpg 1984w" sizes="(max-width: 1180px) 100vw, 1124px" alt="UBMaster Plugin-Oberfläche: Loudness Halo, Master-EQ im Mid/Side-Modus, Signalkette, Loudness-Meter und Empfehlungsbox" width="1984" height="1376" loading="lazy"></figure>
+    <div class="anno reveal">
+      <div><b>01 · NAVBAR</b><span>Modus-Pills für jede Plattform und das Feld für deinen Ziel-LUFS.</span></div>
+      <div><b>02 · HALO</b><span>Live-Spektrum als Ring, große Short-term-LUFS, Ziel-Marker auf der Skala.</span></div>
+      <div><b>03 · KETTE</b><span>Sechs Modul-Karten mit Icon, Status und Ein/Aus – Klick öffnet die Regler.</span></div>
+      <div><b>04 · METER</b><span>Integrated, Short-term, Momentary, True Peak, LRA, GR – plus Empfehlung.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- VERGLEICH -->
+<section class="sec" id="vergleich">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">EIN PLUGIN STATT SIEBEN</div>
+      <h2>Alles drin, was eine<br><span class="silver">Mastering-Kette braucht.</span></h2>
+      <p>Welche Aufgabe jedes Modul übernimmt – und mit welchen bekannten Plugins es sich von der Funktion her vergleichen lässt.</p>
+    </div>
+    <div class="panel cmp reveal">
+      <table>
+        <thead><tr><th>MODUL</th><th>UBMASTER</th><th>VERGLEICHBAR MIT</th></tr></thead>
+        <tbody>
+          <tr><td><b><svg><use href="#i-eq"/></svg>Master-EQ</b></td><td>6-Band-EQ, Global · Mid/Side · Links/Rechts, Band-Zuordnung pro Kanal</td><td><span>FabFilter Pro-Q 4</span><span>iZotope Ozone EQ</span></td></tr>
+          <tr><td><b><svg><use href="#i-tape"/></svg>Tape-Sim</b></td><td>Band-Sättigung mit frei wählbarem Frequenzbereich, Drive, Character, Mix</td><td><span>FabFilter Saturn 2</span><span>UAD Ampex ATR-102</span><span>Softube Tape</span></td></tr>
+          <tr><td><b><svg><use href="#i-tr"/></svg>Transient</b></td><td>Adaptiver, spektraler Transienten-Prozessor – frequenzabhängig cutten oder boosten</td><td><span>oeksound Spiff</span></td></tr>
+          <tr><td><b><svg><use href="#i-st"/></svg>Stereo-Tool</b></td><td>Stereobreite in 3 Bändern (Low/Mid/High) mit Vectorscope und Korrelation</td><td><span>iZotope Ozone Imager</span><span>Waves S1 Stereo Imager</span></td></tr>
+          <tr><td><b><svg><use href="#i-ex"/></svg>Exciter</b></td><td>Obertöne ab wählbarer Frequenz, Tube (gerade) bis Tape (ungerade)</td><td><span>iZotope Ozone Exciter</span><span>Aphex Aural Exciter</span></td></tr>
+          <tr><td><b><svg><use href="#i-lim"/></svg>Limiter</b></td><td>True-Peak-Limiter mit Lookahead, Ceiling und Gain-Reduction-Anzeige</td><td><span>FabFilter Pro-L 2</span><span>iZotope Ozone Maximizer</span></td></tr>
+          <tr><td><b><svg><use href="#i-loud"/></svg>Loudness</b></td><td>LUFS Integrated/Short-term/Momentary, True Peak, LRA, Plattform-Modi, Ziel-LUFS + Empfehlungen</td><td><span>Youlean Loudness Meter</span><span>iZotope Insight</span></td></tr>
+          <tr class="total"><td><b>Gesamtpaket</b></td><td>Alle sieben Module in einer Kette – inklusive spektraler Transienten-Bearbeitung und Tape-Sättigung mit wählbarem Spektrum</td><td><span>iZotope Ozone</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="legal reveal">Alle genannten Produktnamen sind Marken ihrer jeweiligen Inhaber. UBMaster steht in keiner Verbindung zu diesen Herstellern.</p>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="sec" id="download">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">DOWNLOAD · VERSION <span class="ver">1.0.0</span></div>
+      <h2>Holen. Installieren. Mastern.</h2>
+      <p>Installer + Deinstaller für beide Systeme. Danach DAW neu starten – UBMaster liegt unter <b>UNIQUEBABY</b>. Als letztes Plugin auf den Master-Bus.</p>
+    </div>
+    <div class="dl">
+      <div class="dl-card panel reveal">
+        <div class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5 10 4.5v7H3zm8-1.15L21 3v8.5H11zM3 12.5h7v7l-7-1zm8 0h10V21l-10-1.4z" fill="currentColor"/></svg><div><h3>Windows</h3><span class="mono dim">10 / 11 · 64-BIT</span></div></div>
+        <ul><li>VST3 → <code>Common Files\VST3</code></li><li>Standalone-App + Startmenü</li><li>Deinstaller unter „Apps“</li></ul>
+        <a class="btn primary wide" href="https://github.com/gelounique/ubmaster/releases/latest/download/UBMaster-Windows-Setup.exe">UBMaster-Windows-Setup.exe</a>
+        <p class="fine">SmartScreen-Hinweis? „Weitere Informationen“ › „Trotzdem ausführen“.</p>
+      </div>
+      <div class="dl-card panel reveal">
+        <div class="os"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 12.6c0-2.5 2-3.6 2.1-3.7a4.6 4.6 0 0 0-3.6-2c-1.5-.2-3 .9-3.7.9-.8 0-2-.9-3.2-.9a4.8 4.8 0 0 0-4 2.5c-1.8 3-.5 7.5 1.2 9.9.8 1.2 1.8 2.5 3.1 2.5 1.2 0 1.7-.8 3.2-.8s1.9.8 3.2.8 2.2-1.2 3-2.4a10 10 0 0 0 1.4-2.8 4.3 4.3 0 0 1-2.7-4ZM14 5.2a4.4 4.4 0 0 0 1-3.2 4.5 4.5 0 0 0-3 1.5 4.2 4.2 0 0 0-1 3.1A3.7 3.7 0 0 0 14 5.2Z" fill="currentColor"/></svg><div><h3>macOS</h3><span class="mono dim">10.13+ · APPLE SILICON &amp; INTEL</span></div></div>
+        <ul><li>VST3 + Audio Unit (Logic, GarageBand)</li><li>Standalone-App</li><li>Deinstaller im DMG</li></ul>
+        <a class="btn primary wide" href="https://github.com/gelounique/ubmaster/releases/latest/download/UBMaster-macOS.dmg">UBMaster-macOS.dmg</a>
+        <p class="fine">Installer per <b>Rechtsklick › Öffnen</b> starten (nicht notarisiert).</p>
+      </div>
+    </div>
+    <div class="where panel reveal">
+      <div><b>FL Studio</b><span>Plugin-Datenbank neu scannen › Effects › UBMaster</span></div>
+      <div><b>Ableton Live</b><span>Plug-Ins › VST3 / AU › UNIQUEBABY</span></div>
+      <div><b>Logic Pro</b><span>Audio-FX › Audio Units › UNIQUEBABY › UBMaster</span></div>
+      <div><b>Cubase · Studio One · Reaper · Bitwig</b><span>VST3 › UNIQUEBABY › UBMaster</span></div>
+    </div>
+    <p class="fine" style="text-align:center;margin-top:18px">Pro Tools (AAX) folgt, sobald die Avid-/PACE-Signierung eingerichtet ist.</p>
+  </div>
+</section>
+
+<!-- FAMILY + CREDITS -->
+<section class="sec" id="software">
+  <div class="wrap">
+    <div class="head reveal">
+      <div class="eyebrow">UNIQUEBABY SOFTWARE</div>
+      <h2>Die UB-Familie.</h2>
+    </div>
+    <div class="family">
+      <a class="fam panel reveal" href="https://ubgrade.uniquebaby.de"><img src="assets/fam-ubgrade.png" alt="UBGrade Icon"><div><b>UBGrade</b><span>Color Grading für Premiere, After Effects, Photoshop &amp; DaVinci</span></div></a>
+      <a class="fam panel reveal" href="https://ubtune.uniquebaby.de"><img src="assets/fam-ubtune.png" alt="UBTune Icon"><div><b>UBTune</b><span>Realtime-Autotune mit ~2 ms Latenz, VST3 / AU</span></div></a>
+      <a class="fam panel cur reveal" href="#top"><img src="assets/fam-ubmaster.png" alt="UBMaster Icon"><div><b>UBMaster</b><span>Mastering-Suite mit Loudness-Modi, VST3 / AU</span></div></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec credits" id="credits">
+  <div class="wrap narrow">
+    <div class="panel reveal cr">
+      <img src="assets/icon-256.png" alt="UBMaster Icon" width="120" height="120">
+      <div class="eyebrow">ENTWICKELT VON</div>
+      <h2>unique &amp; MELO</h2>
+      <p class="names">UNIQUEBABY</p>
+      <div class="cta"><a class="btn ghost" href="https://uniquebaby.de" target="_blank" rel="noopener">uniquebaby.de</a><a class="btn ghost" href="https://instagram.com/gelounique" target="_blank" rel="noopener">@gelounique</a><a class="btn ghost" href="https://github.com/gelounique/ubmaster" target="_blank" rel="noopener">GitHub</a></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span><img src="assets/ub-white.png" alt="" height="16"> UBMaster · © 2026 unique &amp; MELO · UNIQUEBABY</span>
+    <span class="foot-links"><a href="https://uniquebaby.de">uniquebaby.de</a><a href="https://ubgrade.uniquebaby.de">UBGrade</a><a href="https://ubtune.uniquebaby.de">UBTune</a><a href="https://github.com/gelounique/ubmaster">GitHub</a></span>
+  </div>
+</footer>
+
+<script src="js/site.js?v=100"></script>
+</body>
+</html>
