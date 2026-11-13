@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<installer-gui-script minSpecVersion="2">
+    <title>UBMaster __VERSION__</title>
+    <organization>de.uniquebaby</organization>
+    <welcome file="welcome.html" mime-type="text/html"/>
+    <conclusion file="conclusion.html" mime-type="text/html"/>
+    <options customize="allow" require-scripts="false" hostArchitectures="arm64,x86_64"/>
+    <domains enable_localSystem="true"/>
+    <choices-outline>
+        <line choice="vst3"/>
+        <line choice="au"/>
+        <!--AAX--><line choice="aax"/><!--/AAX-->
+        <line choice="app"/>
+    </choices-outline>
+    <choice id="vst3" title="VST3-Plugin" description="Für Ableton Live, FL Studio, Cubase, Studio One, Reaper, Bitwig …">
+        <pkg-ref id="de.uniquebaby.ubmaster.vst3"/>
+    </choice>
+    <choice id="au" title="Audio Unit (AU)" description="Für Logic Pro, GarageBand, Ableton Live, Reaper …">
+        <pkg-ref id="de.uniquebaby.ubmaster.au"/>
+    </choice>
+    <!--AAX--><choice id="aax" title="AAX-Plugin" description="Für Pro Tools.">
+        <pkg-ref id="de.uniquebaby.ubmaster.aax"/>
+    </choice><!--/AAX-->
+    <choice id="app" title="UBMaster App" description="Standalone-App.">
+        <pkg-ref id="de.uniquebaby.ubmaster.app"/>
+    </choice>
+    <pkg-ref id="de.uniquebaby.ubmaster.vst3" version="__VERSION__">UBMaster-VST3.pkg</pkg-ref>
+    <pkg-ref id="de.uniquebaby.ubmaster.au" version="__VERSION__">UBMaster-AU.pkg</pkg-ref>
+    <!--AAX--><pkg-ref id="de.uniquebaby.ubmaster.aax" version="__VERSION__">UBMaster-AAX.pkg</pkg-ref><!--/AAX-->
+    <pkg-ref id="de.uniquebaby.ubmaster.app" version="__VERSION__">UBMaster-App.pkg</pkg-ref>
+</installer-gui-script>

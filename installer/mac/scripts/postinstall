@@ -1,0 +1,8 @@
+#!/bin/bash
+# AU-Cache auffrischen, damit Logic / GarageBand UBMaster sofort sehen
+killall -9 AudioComponentRegistrar 2>/dev/null || true
+xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/Components/UBMaster.component" 2>/dev/null || true
+xattr -dr com.apple.quarantine "/Library/Audio/Plug-Ins/VST3/UBMaster.vst3" 2>/dev/null || true
+xattr -dr com.apple.quarantine "/Library/Application Support/Avid/Audio/Plug-Ins/UBMaster.aaxplugin" 2>/dev/null || true
+xattr -dr com.apple.quarantine "/Applications/UBMaster.app" 2>/dev/null || true
+exit 0

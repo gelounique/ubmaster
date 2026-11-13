@@ -1,0 +1,232 @@
+# UBMaster — tests, builds, validates and packages the plugin for Windows + macOS.
+# Every green build on main publishes/updates the GitHub release v<project version> with both installers.
+#
+# AAX (Pro Tools) is optional and switches on automatically when these repository secrets exist:
+#   AAX_SDK_URL                       download URL of the Avid AAX SDK zip (developer.avid.com, your account)
+#   PACE_USERNAME / PACE_PASSWORD     PACE Eden account   } signing with wraptool; without a signature Pro Tools
+#   PACE_WCGUID                       wrap GUID from PACE } loads AAX only in developer builds, so unsigned AAX is not shipped
+name: Build UBMaster
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+    paths-ignore: ["web/**", "README.md", ".github/workflows/pages.yml"]
+  workflow_dispatch: {}
+permissions: { contents: write }
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HAS_AAX: ${{ secrets.AAX_SDK_URL != '' }}
+  HAS_PACE: ${{ secrets.PACE_USERNAME != '' && secrets.PACE_WCGUID != '' }}
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deps
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq libasound2-dev libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxext-dev libxcomposite-dev libfreetype-dev libfontconfig1-dev libgl1-mesa-dev xvfb ninja-build
+      - name: Configure
+        run: cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DUBMASTER_BUILD_TESTS=ON
+      - name: DSP tests (latency, transparency, true peak, BS.1770, modules, advice, CPU)
+        run: |
+          cmake --build build --target UBMasterTests --parallel 4
+          ./build/UBMasterTests_artefacts/Release/UBMasterTests
+      - name: VST3 + pluginval (strictness 10)
+        run: |
+          cmake --build build --target UBMaster_VST3 --parallel 4
+          curl -sSL -o pv.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Linux.zip && unzip -q pv.zip
+          xvfb-run -a ./pluginval --strictness-level 10 --validate-in-process --timeout-ms 900000 --validate build/UBMaster_artefacts/Release/VST3/UBMaster.vst3
+      - name: UI snapshots
+        run: |
+          cmake --build build --target UBMasterSnapshot --parallel 4
+          mkdir -p shots; for m in 0 1 2 3 4 5; do ./build/UBMasterSnapshot_artefacts/Release/UBMasterSnapshot shots/module-$m.png $m 1; done
+      - uses: actions/upload-artifact@v4
+        with: { name: ui-snapshots, path: "shots/*" }
+
+  windows:
+    needs: tests
+    runs-on: windows-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: AAX SDK (optional)
+        if: env.HAS_AAX == 'true'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest "${{ secrets.AAX_SDK_URL }}" -OutFile aax.zip
+          Expand-Archive aax.zip -DestinationPath aaxsdk
+          $root = (Get-ChildItem aaxsdk -Recurse -Directory -Filter Interfaces | Select-Object -First 1).Parent.FullName
+          "AAX_ROOT=$root" | Out-File -Append $env:GITHUB_ENV
+      - name: Configure
+        shell: pwsh
+        run: |
+          if ($env:AAX_ROOT) { cmake -S . -B build -A x64 -DAAX_SDK_PATH="$env:AAX_ROOT" } else { cmake -S . -B build -A x64 }
+      - name: Build (VST3 + Standalone [+ AAX])
+        shell: pwsh
+        run: |
+          $t = @('UBMaster_VST3','UBMaster_Standalone'); if ($env:AAX_ROOT) { $t += 'UBMaster_AAX' }
+          cmake --build build --config Release --parallel 4 --target $t
+      - name: Sign AAX with PACE wraptool (optional)
+        if: env.HAS_AAX == 'true' && env.HAS_PACE == 'true'
+        shell: pwsh
+        run: |
+          wraptool sign --verbose --account "${{ secrets.PACE_USERNAME }}" --password "${{ secrets.PACE_PASSWORD }}" --wcguid "${{ secrets.PACE_WCGUID }}" `
+            --in "build/UBMaster_artefacts/Release/AAX/UBMaster.aaxplugin" --out "build/UBMaster_artefacts/Release/AAX/UBMaster.aaxplugin"
+          "SHIP_AAX=1" | Out-File -Append $env:GITHUB_ENV
+      - name: pluginval
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Windows.zip -OutFile pv.zip
+          Expand-Archive pv.zip -DestinationPath pv
+          ./pv/pluginval.exe --strictness-level 10 --verbose --timeout-ms 900000 --output-dir pv-log --validate "build/UBMaster_artefacts/Release/VST3/UBMaster.vst3" 2>&1 | Tee-Object -FilePath pv-console.txt
+          $code = $LASTEXITCODE
+          Write-Host "pluginval exit code: $code"
+          Get-ChildItem pv-log -ErrorAction SilentlyContinue | ForEach-Object { Get-Content $_.FullName -Tail 60 }
+          if ($code -ne 0) { exit 1 }
+      - name: Installer (Inno Setup)
+        shell: pwsh
+        run: |
+          if (-not (Get-Command iscc -ErrorAction SilentlyContinue)) {
+            $p = "${env:ProgramFiles(x86)}\Inno Setup 6"
+            if (-not (Test-Path "$p\ISCC.exe")) { choco install innosetup -y --no-progress }
+            $env:PATH = "$p;$env:PATH"
+          }
+          $ver = (Select-String -Path CMakeLists.txt -Pattern 'project\(UBMaster VERSION ([0-9.]+)').Matches[0].Groups[1].Value
+          $aax = if ($env:SHIP_AAX -eq '1') { 1 } else { 0 }
+          iscc /DAppVersion=$ver /DWithAAX=$aax /DBuildDir="..\..\build\UBMaster_artefacts\Release" installer\windows\UBMaster.iss
+          Get-FileHash dist\UBMaster-Windows-Setup.exe -Algorithm SHA256 | ForEach-Object { "$($_.Hash.ToLower())  UBMaster-Windows-Setup.exe" } | Out-File -Encoding ascii dist\UBMaster-Windows-Setup.exe.sha256
+      - name: Install test (silent install -> pluginval installed VST3 -> app launch -> uninstall)
+        shell: pwsh
+        run: |
+          Start-Process -Wait -FilePath dist\UBMaster-Windows-Setup.exe -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART','/COMPONENTS="vst3,app"','/LOG=install.log'
+          $vst = "$env:CommonProgramFiles\VST3\UBMaster.vst3"
+          if (-not (Test-Path "$vst\Contents\x86_64-win\UBMaster.vst3")) { Get-Content install.log -Tail 40; throw "VST3 not installed" }
+          if (-not (Test-Path "$env:ProgramFiles\UBMaster\UBMaster.exe")) { throw "App not installed" }
+          ./pv/pluginval.exe --strictness-level 5 --timeout-ms 600000 --validate "$vst" 2>&1 | Out-Host
+          if ($LASTEXITCODE -ne 0) { throw "pluginval on installed VST3 failed" }
+          $app = Start-Process -PassThru -FilePath "$env:ProgramFiles\UBMaster\UBMaster.exe"
+          Start-Sleep -Seconds 8
+          if ($app.HasExited) { throw "Standalone app exited/crashed (code $($app.ExitCode))" }
+          Stop-Process -Id $app.Id -Force
+          Start-Sleep -Seconds 2
+          $un = Get-ChildItem "$env:ProgramFiles\UBMaster\unins*.exe" | Select-Object -First 1
+          Start-Process -Wait -FilePath $un.FullName -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART'
+          Start-Sleep -Seconds 3
+          if (Test-Path $vst) { throw "Uninstaller left VST3 behind" }
+          if (Test-Path "$env:ProgramFiles\UBMaster\UBMaster.exe") { throw "Uninstaller left the app behind" }
+          Write-Host "Install / validate / launch / uninstall OK"
+      - uses: actions/upload-artifact@v4
+        with: { name: UBMaster-Windows, path: "dist/*" }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: pluginval-windows, path: "pv-log/*", if-no-files-found: ignore }
+
+  macos:
+    needs: tests
+    runs-on: macos-15-intel
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+      - name: AAX SDK (optional)
+        if: env.HAS_AAX == 'true'
+        run: |
+          curl -sSL -o aax.zip "${{ secrets.AAX_SDK_URL }}" && unzip -q aax.zip -d aaxsdk
+          echo "AAX_ROOT=$(dirname "$(find "$PWD/aaxsdk" -type d -name Interfaces | head -1)")" >> "$GITHUB_ENV"
+      - name: Configure (Universal arm64 + x86_64)
+        run: cmake -S . -B build -G Xcode -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" ${AAX_ROOT:+-DAAX_SDK_PATH="$AAX_ROOT"}
+      - name: Build (VST3 + AU + Standalone [+ AAX])
+        run: |
+          set -o pipefail
+          T="UBMaster_VST3 UBMaster_AU UBMaster_Standalone"; [ -n "${AAX_ROOT:-}" ] && T="$T UBMaster_AAX"
+          cmake --build build --config Release --parallel 4 --target $T -- -quiet
+      - name: Sign AAX with PACE wraptool (optional)
+        if: env.HAS_AAX == 'true' && env.HAS_PACE == 'true'
+        run: |
+          wraptool sign --verbose --account "${{ secrets.PACE_USERNAME }}" --password "${{ secrets.PACE_PASSWORD }}" --wcguid "${{ secrets.PACE_WCGUID }}" \
+            --in build/UBMaster_artefacts/Release/AAX/UBMaster.aaxplugin --out build/UBMaster_artefacts/Release/AAX/UBMaster.aaxplugin
+      - name: Drop unsigned AAX
+        if: env.HAS_PACE != 'true'
+        run: rm -rf build/UBMaster_artefacts/Release/AAX
+      - name: Check universal binaries
+        run: |
+          lipo -info build/UBMaster_artefacts/Release/VST3/UBMaster.vst3/Contents/MacOS/UBMaster
+          lipo -info build/UBMaster_artefacts/Release/AU/UBMaster.component/Contents/MacOS/UBMaster
+      - name: auval + pluginval
+        run: |
+          mkdir -p ~/Library/Audio/Plug-Ins/Components ~/Library/Audio/Plug-Ins/VST3
+          cp -R build/UBMaster_artefacts/Release/AU/UBMaster.component ~/Library/Audio/Plug-Ins/Components/
+          codesign --force --deep -s - ~/Library/Audio/Plug-Ins/Components/UBMaster.component
+          killall -9 AudioComponentRegistrar || true
+          sleep 3
+          auval -v aufx UbMs Unqb
+          curl -sSL -o pv.zip https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip
+          unzip -q pv.zip
+          ./pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --verbose --timeout-ms 900000 --output-dir pv-log --validate build/UBMaster_artefacts/Release/VST3/UBMaster.vst3
+      - name: Package (.pkg in .dmg)
+        run: |
+          VER=$(sed -nE 's/^project\(UBMaster VERSION ([0-9.]+).*/\1/p' CMakeLists.txt)
+          bash installer/mac/package.sh build/UBMaster_artefacts/Release "$VER"
+      - name: Install test (pkg -> auval/pluginval installed -> app launch -> uninstaller)
+        run: |
+          rm -rf ~/Library/Audio/Plug-Ins/Components/UBMaster.component
+          hdiutil attach dist/UBMaster-macOS.dmg -nobrowse -mountpoint /tmp/ubdmg
+          sudo installer -pkg "/tmp/ubdmg/UBMaster Installer.pkg" -target /
+          test -d /Library/Audio/Plug-Ins/VST3/UBMaster.vst3
+          test -d /Library/Audio/Plug-Ins/Components/UBMaster.component
+          test -d /Applications/UBMaster.app
+          codesign --verify --deep --strict /Library/Audio/Plug-Ins/Components/UBMaster.component
+          codesign --verify --deep --strict /Applications/UBMaster.app
+          killall -9 AudioComponentRegistrar || true; sleep 3
+          auval -v aufx UbMs Unqb | tail -4
+          auval -v aufx UbMs Unqb | grep -q "AU VALIDATION SUCCEEDED"
+          ./pluginval.app/Contents/MacOS/pluginval --strictness-level 5 --timeout-ms 600000 --validate /Library/Audio/Plug-Ins/VST3/UBMaster.vst3
+          /Applications/UBMaster.app/Contents/MacOS/UBMaster & APP=$!
+          sleep 8
+          kill -0 $APP && echo "Standalone running OK"
+          kill $APP || true
+          sudo bash "/tmp/ubdmg/UBMaster deinstallieren.command"
+          test ! -e /Library/Audio/Plug-Ins/VST3/UBMaster.vst3
+          test ! -e /Library/Audio/Plug-Ins/Components/UBMaster.component
+          test ! -e /Applications/UBMaster.app
+          hdiutil detach /tmp/ubdmg
+          echo "Install / validate / launch / uninstall OK"
+      - uses: actions/upload-artifact@v4
+        with: { name: UBMaster-macOS, path: "dist/*" }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: pluginval-macos, path: "pv-log/*", if-no-files-found: ignore }
+
+  release:
+    needs: [windows, macos]
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version
+        id: v
+        run: echo "ver=$(sed -nE 's/^project\(UBMaster VERSION ([0-9.]+).*/\1/p' CMakeLists.txt)" >> "$GITHUB_OUTPUT"
+      - uses: actions/download-artifact@v4
+        with: { path: dist, merge-multiple: true, pattern: "UBMaster-*" }
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.v.outputs.ver }}
+          target_commitish: ${{ github.sha }}
+          name: UBMaster ${{ steps.v.outputs.ver }}
+          make_latest: "true"
+          files: dist/*
+          body: |
+            **UBMaster ${{ steps.v.outputs.ver }}** — Mastering-Suite by **unique & MELO** · UNIQUEBABY
+
+            | | Download | Formate |
+            |---|---|---|
+            | 🪟 Windows 10/11 (x64) | `UBMaster-Windows-Setup.exe` | VST3 + Standalone, mit Deinstaller |
+            | 🍎 macOS 10.13+ (Apple Silicon + Intel) | `UBMaster-macOS.dmg` | VST3 + AU + Standalone, mit Deinstaller |
+
+            Signalkette: **EQ** (Global · M/S · L/R) → **Tape** (Sättigung im wählbaren Spektrum) → **Transient** (adaptiv, spektral) → **Stereo** (3 Bänder + Vectorscope) → **Exciter** → **True-Peak-Limiter** → **Loudness** (Spotify · Apple Music · YouTube · SoundCloud · Custom, LUFS I/S/M, True Peak, LRA + Empfehlungen).
+            Geprüft mit pluginval (Strictness 10), auval und Install/Uninstall-Tests auf Windows & macOS.
+
+            Infos & Anleitung: https://ubmaster.uniquebaby.de

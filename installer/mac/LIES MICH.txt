@@ -1,0 +1,19 @@
+UBMaster — by unique & MELO · UNIQUEBABY
+https://ubmaster.uniquebaby.de
+
+INSTALLIEREN
+1. „UBMaster Installer.pkg“ mit RECHTSKLICK › „Öffnen“ starten
+   (macOS warnt, weil der Installer nicht über den App Store kommt).
+   Falls blockiert: Systemeinstellungen › Datenschutz & Sicherheit › „Trotzdem öffnen“.
+2. Durchklicken – unter „Anpassen“ kannst du VST3 / AU / App einzeln wählen.
+3. DAW neu starten bzw. Plugins neu scannen.
+
+WO FINDE ICH UBMASTER?
+- Logic Pro / GarageBand: Audio-FX › Audio Units › UNIQUEBABY › UBMaster
+- Ableton Live: Plug-Ins › VST3 (oder AU) › UNIQUEBABY › UBMaster
+- FL Studio, Cubase, Studio One, Reaper, Bitwig: VST3 › UNIQUEBABY › UBMaster
+- Pro Tools: nur mit der AAX-Version (falls im Installer enthalten)
+Tipp: UBMaster als letztes Plugin auf den Master-Bus legen.
+
+DEINSTALLIEREN
+„UBMaster deinstallieren.command“ doppelklicken (bzw. Rechtsklick › Öffnen).
